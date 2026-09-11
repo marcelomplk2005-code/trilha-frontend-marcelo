@@ -25,10 +25,10 @@ Repositório `trilha-frontend-<seu-nome>` com um README (seu nome e o objetivo d
 
 ## Critérios de aceite
 
-- [ ] `node -v` mostra 22.12 ou mais novo
-- [ ] PR com pelo menos 2 commits de mensagem descritiva
-- [ ] PR aprovado e mergeado pelo mentor
-- [ ] Mostra ao mentor uma requisição qualquer na aba Network do DevTools
+- [x] `node -v` mostra 22.12 ou mais novo
+- [x] PR com pelo menos 2 commits de mensagem descritiva
+- [x] PR aprovado e mergeado pelo mentor
+- [x] Mostra ao mentor uma requisição qualquer na aba Network do DevTools
 
 ---
 
