@@ -1,0 +1,71 @@
+[
+  {
+    "id": "1",
+    "nome": "Dra. Helena Prado",
+    "especialidade": "Cardiologia",
+    "crm": "7001",
+    "email": "helena.prado@example.com",
+    "telefone": "11904721258",
+    "ativo": true
+  },
+  {
+    "id": "2",
+    "nome": "Dr. Bruno Tavares",
+    "especialidade": "Ortopedia",
+    "crm": "5457",
+    "email": "bruno.tavares@example.com",
+    "ativo": true
+  },
+  {
+    "id": "3",
+    "nome": "Dra. Carla Menezes",
+    "especialidade": "Clínico geral",
+    "crm": "3884",
+    "email": "carla.menezes@example.com",
+    "telefone": "31974088125",
+    "ativo": false
+  },
+  {
+    "id": "4",
+    "nome": "Dr. Diego Ramos",
+    "especialidade": "Cardiologia",
+    "crm": "19654",
+    "email": "diego.ramos@example.com",
+    "telefone": "41928700759",
+    "ativo": true
+  },
+  {
+    "id": "5",
+    "nome": "Dra. Elisa Fontes",
+    "especialidade": "Ortopedia",
+    "crm": "7356",
+    "email": "elisa.fontes@example.com",
+    "ativo": true
+  },
+  {
+    "id": "6",
+    "nome": "Dr. Fábio Lacerda",
+    "especialidade": "Clínico geral",
+    "crm": "85610",
+    "email": "fabio.lacerda@example.com",
+    "telefone": "61932755979",
+    "ativo": true
+  },
+  {
+    "id": "7",
+    "nome": "Dra. Gisele Monteiro",
+    "especialidade": "Clínico geral",
+    "crm": "41497",
+    "email": "gisele.monteiro@example.com",
+    "ativo": false
+  },
+  {
+    "id": "8",
+    "nome": "Dr. Henrique Saraiva",
+    "especialidade": "Cardiologia",
+    "crm": "9962",
+    "email": "henrique.saraiva@example.com",
+    "telefone": "11969984573",
+    "ativo": true
+  }
+]

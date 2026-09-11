@@ -1,0 +1,17 @@
+{
+  "name": "trilha-api-fake",
+  "private": true,
+  "type": "module",
+  "description": "API fake da trilha frontend: json-server servindo dados/pacientes.json e dados/profissionais.json",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "prestart": "node scripts/reset.mjs --se-nao-existir",
+    "start": "json-server db.json --port 3000",
+    "reset": "node scripts/reset.mjs"
+  },
+  "dependencies": {
+    "json-server": "1.0.0-beta.15"
+  }
+}
