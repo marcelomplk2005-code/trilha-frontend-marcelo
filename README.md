@@ -1,4 +1,4 @@
-# Trilha Frontend — Estagiários
+# Trilha Frontend — Estagiários - Marcelo Khusala 
 
 **Duração:** 4 semanas · 6h/dia · 20 dias úteis
 **Pré-requisito:** lógica de programação em qualquer linguagem.
