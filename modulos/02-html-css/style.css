@@ -84,4 +84,73 @@ body {
   margin-bottom: 20px;
 }
 
+.painel {
+  width: 100%;
+  max-width: 1100px;
+}
+.painel__titulo {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 40px;
+  font-family: Arial Narrow, sans-serif;
+  color: var(--color-primary);
+}
+.lista-de-pacientes {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+@media (min-width: 768px) {
+  .lista-de-pacientes {
+    flex-direction: row;
+    flex-wrap: wrap;
+    }
+}
+.card-do-paciente {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .card-do-paciente {
+    flex: 0 0 calc((100% - 40px) / 3);
+    max-width: calc((100% - 40px) / 3);
+  }
+}
+.card-do-paciente__nome {
+  font-size: 20px;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+.card-do-paciente__cidade-uf,
+.card-do-paciente__nascimento {
+  font-size: 14px;
+  color: #666666;
+}
+.card-do-paciente__cpf {
+  font-size: 13px;
+  font-weight: bold;
+}
+.card-do-paciente__status {
+  font-size: 14px;
+  font-weight: bold;
+  color: #15803d;
+  margin-top: auto;
+}
+.card-do-paciente--inativo {
+  border-left-color: var(--color-inactive);
+  opacity: 0.5;
+}
+.card-do-paciente--inativo .card-do-paciente__nome {
+  color: var(--color-inactive);
+}
+.card-do-paciente--inativo .card-do-paciente__status {
+  color: #b91c1c;
+}
 /*# sourceMappingURL=style.css.map */
