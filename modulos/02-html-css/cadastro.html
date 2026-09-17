@@ -34,7 +34,7 @@
 
         <div class="cadastro__campo">
           <label for="telefone">Telefone:</label>
-          <input type="tel" id="telefone" name="telefone" required />
+          <input type="tel" maxlength="13" id="telefone" name="telefone" required />
         </div>
 
         <div class="cadastro__campo">
@@ -46,7 +46,7 @@
             <option value="outro">Prefiro não informar</option>
           </select>
         </div>
-
+        
         <div class="cadastro__campo">
           <label for="cep">CEP:</label>
           <input type="text" id="cep" name="cep" required />
@@ -75,4 +75,6 @@
         <button class="cadastro__salvar" type="submit">Salvar</button>
     </main>
   </body>
+  <script src="../03-javascript/cep.js"></script>
+  <script type="module" src="../03-javascript/main.js"></script>
 </html>
