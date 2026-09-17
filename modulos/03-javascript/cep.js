@@ -1,5 +1,5 @@
 // É chamada quando o usuário apaga o CEP, digita um CEP inválido ou ocorre um erro.
-const limpa_formulario_cep = () => { 
+const limpaFormularioCep = () => { 
     document.getElementById('rua').value = "";
     document.getElementById('bairro').value = "";
     document.getElementById('cidade').value = "";
@@ -8,10 +8,10 @@ const limpa_formulario_cep = () => {
 
 // A palavra 'async' avisa o JavaScript que esta função fará tarefas demoradas
 // e precisará pausar em alguns momentos esperando respostas.
-const pesquisacep = async (valor) => {
+export const pesquisacep = async (valor) => {
     const cep = valor.replace(/\D/g, ''); // Remove tudo o que não é dígito
 
-    if (cep !== "") {
+    if (cep.length === 8) { //Verifica se o CEP tem 8 dígitos
         const validacep = /^[0-9]{8}$/;
 
         if (validacep.test(cep)) { //Testa se o CEP passa na regra de validação
@@ -36,23 +36,18 @@ const pesquisacep = async (valor) => {
                     document.getElementById('uf').value = conteudo.uf;
                 } else {
                     //O CEP tem 8 números, mas não existe, limpa a tela e avisa o usuário.
-                    limpa_formulario_cep();
-                    alert("CEP não encontrado.");
+                    limpaFormularioCep();
+                    console.warn("CEP não encontrado.");
+                    alert("CEP não encontrado. Por favor, verifique o número digitado.");
                 }
             } catch (erro) { // Cai aqui se a internet cair, o servidor do ViaCEP estiver fora do ar, etc.
-                limpa_formulario_cep();
+                limpaFormularioCep();
+                console.error(erro, "Erro ao buscar o CEP. Verifique sua conexão.");
                 alert("Erro ao buscar o CEP. Verifique sua conexão.");
             }
         } else {
-            limpa_formulario_cep();
+            limpaFormularioCep();
         }
     };
+
 };
-
-const cepInput = document.getElementById('cep');
-
-// O 'blur' é disparado assim que o usuário clica fora do campo de input (perde o foco).
-// Quando isso acontece, ele pega o que está escrito (event.target.value) e manda para a função pesquisacep
-cepInput.addEventListener('blur', (event) => {
-    pesquisacep(event.target.value);
-});
