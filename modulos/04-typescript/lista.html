@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/src/style.css"/>
+    <title>Lista de Pacientes</title>
+</head>
+<body>
+    <main class="painel">
+        <h1 class="painel__titulo">Lista de Pacientes</h1>  <!-- mostrando nome, cidade/UF, CPF, data de nascimento e status -->
+        <div class="painel__busca">
+            <label for="busca-paciente">Buscar Paciente:</label>
+            <input type="search" id="busca-paciente" class="painel__input" placeholder="Digite o nome do paciente">
+        </div>
+        <section class="lista-de-pacientes" id="container-pacientes">
+        </section>
+    </main>
+    <script type="module" src="/src/lista.ts"></script> 
+</body>
+</html>
