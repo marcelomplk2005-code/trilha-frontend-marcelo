@@ -1,0 +1,236 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --color-primary: #321d6f;
+  --color-background: #f5f5f5e3;
+  --color-primary-hover: #1f114a;
+  --color-text: #333333;
+  --color-border: #cccccc;
+  --color-inactive: #9ca3af;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.cadastro {
+  padding: 30px;
+  border-radius: 15px;
+  background-color: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+}
+.cadastro__titulo {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 32px;
+  font-family: Arial Narrow, sans-serif;
+}
+.cadastro__formulario {
+  display: flex;
+  flex-direction: column;
+}
+.cadastro__campo {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+.cadastro__campo label {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+.cadastro__campo input, .cadastro__campo select {
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 16px;
+}
+.cadastro__campo input:focus, .cadastro__campo select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+.cadastro__salvar {
+  display: inline-block;
+  padding: 15px 25px;
+  font-size: 24px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  color: #fff;
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+.cadastro__salvar:hover {
+  background-color: var(--color-primary-hover);
+}
+.cadastro__salvar:active {
+  background-color: var(--color-primary);
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+.cadastro__campo {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.painel {
+  width: 100%;
+  max-width: 1100px;
+}
+.painel__busca {
+  max-width: 500px;
+  margin: 0 auto 30px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.painel__busca label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+.painel__busca input {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 1px solid var(--color-border, #ccc);
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.painel__busca input :focus {
+  border-color: #2b3990;
+  box-shadow: 0 0 0 3px rgba(43, 57, 144, 0.15);
+}
+.painel__titulo {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 40px;
+  font-family: Arial Narrow, sans-serif;
+  color: var(--color-primary);
+}
+.lista-de-pacientes {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+@media (min-width: 768px) {
+  .lista-de-pacientes {
+    flex-direction: row;
+    flex-wrap: wrap;
+    }
+}
+.card-do-paciente {
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+@media (min-width: 768px) {
+  .card-do-paciente {
+    flex: 0 0 calc((100% - 40px) / 3);
+    max-width: calc((100% - 40px) / 3);
+  }
+}
+.card-do-paciente__nome {
+  font-size: 20px;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+.card-do-paciente__cidade-uf,
+.card-do-paciente__nascimento {
+  font-size: 14px;
+  color: #666666;
+}
+.card-do-paciente__cpf {
+  font-size: 13px;
+  font-weight: bold;
+}
+.card-do-paciente__status {
+  font-size: 14px;
+  font-weight: bold;
+  color: #15803d;
+  margin-top: auto;
+}
+.card-do-paciente--inativo {
+  border-left-color: var(--color-inactive);
+  opacity: 0.5;
+}
+.card-do-paciente--inativo .card-do-paciente__nome {
+  color: var(--color-inactive);
+}
+.card-do-paciente--inativo .card-do-paciente__status {
+  color: #b91c1c;
+}
+
+/* Container que alinha os botões e o texto da página no centro */
+.paginacao {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 30px;
+  font-weight: bold;
+  color: var(--color-text);
+}
+
+.btn-default, .btn-outline {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-default {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-default:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+  transform: translateY(-2px);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background-color: var(--color-background);
+}
+
+/* Tratamento visual para quando o botão está desabilitado (nas pontas da paginação) */
+.btn-default:disabled, .btn-outline:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
