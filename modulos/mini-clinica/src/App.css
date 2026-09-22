@@ -90,6 +90,8 @@ body {
 .painel {
   width: 100%;
   max-width: 1100px;
+  margin: 0 auto;
+  border: none;
 }
 .painel__busca {
   max-width: 500px;
@@ -135,6 +137,7 @@ body {
   .lista-de-pacientes {
     flex-direction: row;
     flex-wrap: wrap;
+    justify-content: center;
     }
 }
 .card-do-paciente {
@@ -194,6 +197,7 @@ body {
   margin-top: 30px;
   font-weight: bold;
   color: var(--color-text);
+  border: none;
 }
 
 .btn-default, .btn-outline {
