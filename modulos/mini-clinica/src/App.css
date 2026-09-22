@@ -129,15 +129,13 @@ body {
   color: var(--color-primary);
 }
 .lista-de-pacientes {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 20px;
 }
 @media (min-width: 768px) {
   .lista-de-pacientes {
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
+    grid-template-columns: repeat(3, 1fr);
     }
 }
 .card-do-paciente {
@@ -151,12 +149,7 @@ body {
   gap: 8px;
   width: 100%;
 }
-@media (min-width: 768px) {
-  .card-do-paciente {
-    flex: 0 0 calc((100% - 40px) / 3);
-    max-width: calc((100% - 40px) / 3);
-  }
-}
+
 .card-do-paciente__nome {
   font-size: 20px;
   color: var(--color-primary);
