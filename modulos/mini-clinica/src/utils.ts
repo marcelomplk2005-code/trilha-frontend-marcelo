@@ -1,4 +1,4 @@
-import type { Paciente } from './types';
+import type { Paciente } from './types/types';
 
 export const formatCPF = (text: string): string => {
     // Checagem truthy: Se o texto for vazio, retorna o próprio vazio e para a função.
