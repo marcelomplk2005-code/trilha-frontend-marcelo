@@ -97,7 +97,7 @@ export const PacienteForm = () => {
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
       <h1>{id && id !== 'novo' ? 'Editar Paciente' : 'Novo Paciente'}</h1>
       
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '20px' }}>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '20px' }}>
         
         {/* NOME */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>

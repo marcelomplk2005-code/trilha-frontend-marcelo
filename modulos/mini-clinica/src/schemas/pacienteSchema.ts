@@ -26,7 +26,7 @@ export const pacienteSchema = z.object({
     .min(1, "Informe o celular")
     .refine((val) => {
       const apenasNumeros = val.replace(/\D/g, '');
-      return apenasNumeros.length === 11;
+      return apenasNumeros.length === 11 && apenasNumeros[2] === '9';
     }, "Celular inválido"),
 
   // E-MAIL: Zod já tem validação nativa para e-mail
