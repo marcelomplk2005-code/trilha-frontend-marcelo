@@ -7,16 +7,16 @@ export interface Paciente {
   id: string; 
   nome: string;
   cpf: string;
-  dataNascimento: string; 
-  celular: string; 
-  email: string;
-  sexo: SexoPaciente;
+  dataNascimento?: string; 
+  celular?: string; 
+  email?: string;
+  sexo?: SexoPaciente;
   status: StatusPaciente;
-  cep: string;
-  rua: string;
-  bairro: string;
-  cidade: string;
-  uf: string;
+  cep?: string;
+  rua?: string;
+  bairro?: string;
+  cidade?: string;
+  uf?: string;
 }
 
 export interface EnderecoViaCep {
