@@ -1,23 +1,30 @@
 import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useHistory, useParams } from 'react-router-dom';
 import { pacienteSchema, type PacienteFormData } from '../../schemas/pacienteSchema';
 import { createPaciente, updatePaciente, getPacienteById } from '../../services/pacientes';
 import { useToastStore } from '../../store/toast';
+import { formatCPF, formatCellphone } from '../../utils';
 
+import { 
+  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, 
+  IonButton, IonButtons, IonInput, IonSelect, IonSelectOption, 
+  IonItem, IonText, IonIcon
+} from '@ionic/react';
+import { arrowBackOutline, saveOutline } from 'ionicons/icons';
 
 export const PacienteForm = () => {
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
+
   const showToast = useToastStore((state) => state.showToast);
 
-  // Inicializa o React Hook Form com o Zod
   const { 
-    register, 
+    control, // O control substitui o register e gerencia os Controllers
     handleSubmit, 
-    setValue, // Usado para injetar os dados do ViaCEP
-    reset,    // Usado para preencher o formulário na edição
+    setValue, 
+    reset,    
     formState: { errors, isSubmitting } 
   } = useForm<PacienteFormData>({
     resolver: zodResolver(pacienteSchema),
@@ -26,13 +33,12 @@ export const PacienteForm = () => {
     }
   });
 
-  // Carregamento dos dados a partir da edição
   useEffect(() => {
     if (id && id !== 'novo') {
       const carregarPaciente = async () => {
         try {
           const dados = await getPacienteById(id);
-          reset(dados); // O reset preenche automaticamente todos os inputs que dão "match" com o objeto
+          reset(dados);
         } catch (error) {
           console.error('Erro ao carregar dados:', error);
           showToast('Erro ao carregar paciente.', 'error');
@@ -42,13 +48,7 @@ export const PacienteForm = () => {
     }
   }, [id, reset, showToast]);
 
-  // Busca de CEP
-  const handleBuscaCep = async (evento: React.FocusEvent<HTMLInputElement>) => {
-    const cepBuscado = evento.target.value.replace(/\D/g, '');
-    
-    if (cepBuscado.length !== 8) return;
-
-    // Feedback visual temporário
+  const buscarCepNaApi = async (cepBuscado: string) => {
     setValue('rua', 'Buscando...');
     setValue('bairro', 'Buscando...');
     setValue('cidade', 'Buscando...');
@@ -76,8 +76,7 @@ export const PacienteForm = () => {
     }
   };
 
-  // Salva os Dados
-  const onSubmit = async (data: PacienteFormData) => {
+  const onSubmit: SubmitHandler<PacienteFormData> = async (data) => {
     try {
       if (id && id !== 'novo') {
         await updatePaciente(id, data);
@@ -94,123 +93,254 @@ export const PacienteForm = () => {
   };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <h1>{id && id !== 'novo' ? 'Editar Paciente' : 'Novo Paciente'}</h1>
-      
-      <form onSubmit={handleSubmit(onSubmit)} noValidate style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginTop: '20px' }}>
-        
-        {/* NOME */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-          <label>Nome Completo</label>
-          <input {...register('nome')} placeholder="Ex: Fulano de Ciclano" style={{ padding: '10px' }} />
-          {errors.nome && <span style={{ color: 'red', fontSize: '14px' }}>{errors.nome.message}</span>}
-        </div>
+    <IonPage>
+      <IonHeader>
+        <IonToolbar color="primary">
+          <IonButtons slot="start">
+            <IonButton onClick={() => history.push('/pacientes')}>
+              <IonIcon slot="icon-only" icon={arrowBackOutline} />
+            </IonButton>
+          </IonButtons>
+          <IonTitle>{id && id !== 'novo' ? 'Editar Paciente' : 'Novo Paciente'}</IonTitle>
+        </IonToolbar>
+      </IonHeader>
 
-        {/* CPF */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-          <label>CPF</label>
-          <input {...register('cpf')} placeholder="Apenas números" maxLength={14} style={{ padding: '10px' }} />
-          {errors.cpf && <span style={{ color: 'red', fontSize: '14px' }}>{errors.cpf.message}</span>}
-        </div>
-
-        {/* DATA DE NASCIMENTO */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-          <label>Data de Nascimento</label>
-          <input type="date" {...register('dataNascimento')} style={{ padding: '10px' }} />
-          {errors.dataNascimento && <span style={{ color: 'red', fontSize: '14px' }}>{errors.dataNascimento.message}</span>}
-        </div>
-
-        {/* CELULAR */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-          <label>Celular</label>
-          <input {...register('celular')} placeholder="Ex.: (11) 98989-0101" maxLength={15} style={{ padding: '10px' }} />
-          {errors.celular && <span style={{ color: 'red', fontSize: '14px' }}>{errors.celular.message}</span>}
-        </div>
-
-        {/* E-MAIL */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-          <label>E-mail</label>
-          <input type="email" {...register('email')} placeholder="email@exemplo.com" style={{ padding: '10px' }} />
-          {errors.email && <span style={{ color: 'red', fontSize: '14px' }}>{errors.email.message}</span>}
-        </div>
-
-        {/* SEXO */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-          <label>Sexo</label>
-          <select {...register('sexo')} style={{ padding: '10px' }}>
-            <option value="">Selecione...</option>
-            <option value="Feminino">Feminino</option>
-            <option value="Masculino">Masculino</option>
-            <option value="Outro">Outro</option>
-          </select>
-        </div>
-
-        {/* STATUS */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-          <label>Status</label>
-          <select {...register('status')} style={{ padding: '10px' }}>
-            <option style={{backgroundColor: '#90EE90', color: 'white'}}value="Ativo">Ativo</option>
-            <option style={{backgroundColor: '#FA8072', color: 'white'}}value="Inativo">Inativo</option>
-          </select>
-        </div>
-
-        <h3 style={{ gridColumn: 'span 2', marginTop: '10px', marginBottom: '0' }}>Endereço</h3>
-
-        {/* CEP */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-          <label>CEP</label>
-          <input 
-            {...register('cep')} 
-            onBlur={handleBuscaCep} 
-            placeholder="00000-000" 
-            maxLength={9} 
-            style={{ padding: '10px' }} 
-          />
-        </div>
-
-        {/* RUA */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-          <label>Rua</label>
-          <input {...register('rua')} style={{ padding: '10px' }} />
-        </div>
-
-        {/* BAIRRO */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-          <label>Bairro</label>
-          <input {...register('bairro')} style={{ padding: '10px' }} />
-        </div>
-
-        {/* CIDADE E UF */}
-        <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr', gap: '10px' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-            <label>Cidade</label>
-            <input {...register('cidade')} style={{ padding: '10px' }} />
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-            <label>UF</label>
-            <input {...register('uf')} maxLength={2} style={{ padding: '10px' }} />
-          </div>
-        </div>
-
-        {/* BOTÕES DE AÇÃO */}
-        <div style={{ gridColumn: 'span 2', display: 'flex', gap: '10px', marginTop: '20px' }}>
-          <button 
-            type="submit" 
-            disabled={isSubmitting} // Desabilita enquanto salva
-            style={{ flex: 1, padding: '15px', backgroundColor: isSubmitting ? '#a5d8b2' : '#28a745', color: '#fff', border: 'none', borderRadius: '4px', cursor: isSubmitting ? 'not-allowed' : 'pointer', fontWeight: 'bold' }}
-          >
-            {isSubmitting ? 'Salvando...' : 'Salvar Paciente'}
-          </button>
+      <IonContent className="ion-padding">
+        <form onSubmit={handleSubmit(onSubmit)} noValidate style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', maxWidth: '800px', margin: '0 auto' }}>
           
-          <button 
-            type="button" 
-            onClick={() => history.push('/pacientes')} 
-            style={{ flex: 1, padding: '15px', backgroundColor: '#6c757d', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
-          >
-            Cancelar
-          </button>
-        </div>
-      </form>
-    </div>
+          {/* NOME */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <IonItem>
+              <Controller
+                name="nome"
+                control={control}
+                render={({ field }) => (
+                  <IonInput
+                    label="Nome Completo"
+                    labelPlacement="floating"
+                    value={field.value}
+                    onIonInput={e => field.onChange(e.detail.value ?? "")}
+                    onIonBlur={field.onBlur}
+                  />
+                )}
+              />
+            </IonItem>
+            {errors.nome && <IonText color="danger"><small>{errors.nome.message}</small></IonText>}
+          </div>
+
+          {/* CPF */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <IonItem>
+              <Controller
+                name="cpf"
+                control={control}
+                render={({ field }) => (
+                  <IonInput
+                    label="CPF"
+                    labelPlacement="floating"
+                    maxlength={14}
+                    value={field.value}
+                    onIonInput={e => {
+                      // Pega o que o usuário digitou, formata e só então manda para o form
+                      const mascarado = formatCPF((e.detail.value ?? "").toString());
+                      field.onChange(mascarado);
+                    }}
+                    onIonBlur={field.onBlur}
+                  />
+                )}
+              />
+            </IonItem>
+            {errors.cpf && <IonText color="danger"><small>{errors.cpf.message}</small></IonText>}
+          </div>
+
+          {/* DATA DE NASCIMENTO */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <IonItem>
+              <Controller
+                name="dataNascimento"
+                control={control}
+                render={({ field }) => (
+                  <IonInput
+                    type="date"
+                    label="Data de Nascimento"
+                    labelPlacement="floating"
+                    value={field.value}
+                    onIonInput={e => field.onChange(e.detail.value ?? "")}
+                    onIonBlur={field.onBlur}
+                  />
+                )}
+              />
+            </IonItem>
+            {errors.dataNascimento && <IonText color="danger"><small>{errors.dataNascimento.message}</small></IonText>}
+          </div>
+
+          {/* CELULAR */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <IonItem>
+              <Controller
+                name="celular"
+                control={control}
+                render={({ field }) => (
+                  <IonInput
+                    label="Celular"
+                    labelPlacement="floating"
+                    maxlength={15}
+                    value={field.value}
+                    onIonInput={e => {
+                      const mascarado = formatCellphone((e.detail.value ?? "").toString());
+                      field.onChange(mascarado);
+                    }}
+                    onIonBlur={field.onBlur}
+                  />
+                )}
+              />
+            </IonItem>
+            {errors.celular && <IonText color="danger"><small>{errors.celular.message}</small></IonText>}
+          </div>
+
+          {/* E-MAIL */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <IonItem>
+              <Controller
+                name="email"
+                control={control}
+                render={({ field }) => (
+                  <IonInput
+                    type="email"
+                    label="E-mail"
+                    labelPlacement="floating"
+                    value={field.value}
+                    onIonInput={e => field.onChange(e.detail.value ?? "")}
+                    onIonBlur={field.onBlur}
+                  />
+                )}
+              />
+            </IonItem>
+            {errors.email && <IonText color="danger"><small>{errors.email.message}</small></IonText>}
+          </div>
+
+          {/* SEXO */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <IonItem>
+              <Controller
+                name="sexo"
+                control={control}
+                render={({ field }) => (
+                  <IonSelect
+                    label="Sexo"
+                    labelPlacement="floating"
+                    value={field.value}
+                    onIonChange={e => field.onChange(e.detail.value)}
+                  >
+                    <IonSelectOption value="Feminino">Feminino</IonSelectOption>
+                    <IonSelectOption value="Masculino">Masculino</IonSelectOption>
+                    <IonSelectOption value="Outro">Outro</IonSelectOption>
+                  </IonSelect>
+                )}
+              />
+            </IonItem>
+          </div>
+
+          {/* STATUS */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <IonItem>
+              <Controller
+                name="status"
+                control={control}
+                render={({ field }) => (
+                  <IonSelect
+                    label="Status"
+                    labelPlacement="floating"
+                    value={field.value}
+                    onIonChange={e => field.onChange(e.detail.value)}
+                  >
+                    <IonSelectOption value="Ativo">Ativo</IonSelectOption>
+                    <IonSelectOption value="Inativo">Inativo</IonSelectOption>
+                  </IonSelect>
+                )}
+              />
+            </IonItem>
+          </div>
+
+          <h3 style={{ gridColumn: 'span 2', marginTop: '10px', marginBottom: '0' }}>Endereço</h3>
+
+          {/* CEP (Com evento de busca na API embutido no onChange) */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <IonItem>
+              <Controller
+                name="cep"
+                control={control}
+                render={({ field }) => (
+                  <IonInput
+                    label="CEP"
+                    labelPlacement="floating"
+                    maxlength={9}
+                    value={field.value}
+                    onIonInput={e => {
+                      const val = (e.detail.value ?? "").toString();
+                      field.onChange(val);
+                      
+                      const apenasNumeros = val.replace(/\D/g, '');
+                      if (apenasNumeros.length === 8) {
+                        buscarCepNaApi(apenasNumeros);
+                      }
+                    }}
+                    onIonBlur={field.onBlur}
+                  />
+                )}
+              />
+            </IonItem>
+          </div>
+
+          {/* RUA */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <IonItem>
+              <Controller name="rua" control={control} render={({ field }) => (
+                <IonInput label="Rua" labelPlacement="floating" value={field.value} onIonInput={e => field.onChange(e.detail.value)} />
+              )} />
+            </IonItem>
+          </div>
+
+          {/* BAIRRO */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <IonItem>
+              <Controller name="bairro" control={control} render={({ field }) => (
+                <IonInput label="Bairro" labelPlacement="floating" value={field.value} onIonInput={e => field.onChange(e.detail.value)} />
+              )} />
+            </IonItem>
+          </div>
+
+          {/* CIDADE E UF */}
+          <div style={{ display: 'grid', gridTemplateColumns: '3fr 1fr', gap: '10px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <IonItem>
+                <Controller name="cidade" control={control} render={({ field }) => (
+                  <IonInput label="Cidade" labelPlacement="floating" value={field.value} onIonInput={e => field.onChange(e.detail.value)} />
+                )} />
+              </IonItem>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <IonItem>
+                <Controller name="uf" control={control} render={({ field }) => (
+                  <IonInput label="UF" labelPlacement="floating" maxlength={2} value={field.value} onIonInput={e => field.onChange(e.detail.value)} />
+                )} />
+              </IonItem>
+            </div>
+          </div>
+
+          {/* BOTÃO DE SALVAR */}
+          <div style={{ gridColumn: 'span 2', marginTop: '20px' }}>
+            <IonButton 
+              type="submit" 
+              expand="block" 
+              disabled={isSubmitting}
+            >
+              <IonIcon slot="start" icon={saveOutline} />
+              {isSubmitting ? 'Salvando...' : 'Salvar Paciente'}
+            </IonButton>
+          </div>
+        </form>
+      </IonContent>
+    </IonPage>
   );
 };

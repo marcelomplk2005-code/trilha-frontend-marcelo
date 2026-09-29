@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 import { getPacientes } from '../services/pacientes';
 import type { Paciente } from '../types/types';
+import { useIonViewWillEnter } from '@ionic/react';
 
 export const usePacientes = () => {
   // As memórias internas desta operação
@@ -15,6 +16,7 @@ export const usePacientes = () => {
       const data = await getPacientes(); 
       setPacientes(data);
     } catch (err) {
+      console.error(err);
       setError('Erro ao carregar a lista de pacientes.');
     } finally {
       setLoading(false); // Independentemente de dar erro ou sucesso, o "carregando" deve terminar
@@ -22,9 +24,9 @@ export const usePacientes = () => {
   };
 
   // Executa a busca automaticamente assim que a tela abre
-  useEffect(() => {
-    fetchPacientes();
-  }, []); // O array vazio no final garante que o React rode isso apenas UMA vez na montagem
+  useIonViewWillEnter(() => {
+    fetchPacientes(); 
+  }); 
 
   // Entrega para a tela visual apenas as informações 'mastigadas'
   return { pacientes, loading, error, refetch: fetchPacientes };

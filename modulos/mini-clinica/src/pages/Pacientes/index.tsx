@@ -1,117 +1,147 @@
+import { useState } from 'react';
 import { usePacientes } from '../../hooks/usePacientes';
-import { useAuthStore } from '../../store/auth';
 import { formatCPF } from '../../utils';
-// Import do useHistory para poder trocar de telas ao clicar nos botões
 import { useHistory } from 'react-router-dom';
 import { deletePaciente } from '../../services/pacientes';
 import { useToastStore } from '../../store/toast';
 
+// Importações vitais do Ionic para estruturar a página e o Modal
+import { 
+  IonPage, IonHeader, IonToolbar, IonTitle, IonContent, 
+  IonButtons, IonMenuButton, IonButton, IonIcon, IonModal 
+} from '@ionic/react';
+// Ícones do Ionic (ionicons)
+import { addOutline, createOutline, trashOutline, warningOutline } from 'ionicons/icons'; 
+
 export const Pacientes = () => {
-  // Puxa a função de logout da memória global (Zustand)
-  const logout = useAuthStore((state) => state.logout);
-  
-  // Puxa os dados e os status do hook customizado (usePacientes.ts)
-  const { pacientes, loading, error } = usePacientes();
-
-  // Chama a função para usá-la nos botões de Novo e Editar
+  const { pacientes, } = usePacientes();
   const history = useHistory();
-
-  // Puxa a função showToast da memória global
   const showToast = useToastStore((state) => state.showToast);
-  // Função que vai disparar ao clicar em Excluir
-  const handleExcluir = async (id: string) => {
-    const confirmar = window.confirm('Tem a certeza que deseja excluir este paciente?');
-    if (!confirmar) return;
+
+  // Em vez de window.confirm, controla a abertura de uma janela na tela
+  const [modalAberto, setModalAberto] = useState(false);
+  const [pacienteParaExcluir, setPacienteParaExcluir] = useState<string | null>(null);
+
+  // Base para quando clicar na lixeira
+  const abrirConfirmacao = (id: string) => {
+    setPacienteParaExcluir(id);
+    setModalAberto(true);
+  };
+
+  // Função que realmente vai à API quando o utilizador clica em "Sim"
+  const confirmarExclusao = async () => {
+    if (!pacienteParaExcluir) return;
 
     try {
-      // Vai à API e apaga
-      await deletePaciente(id);
-      
-      // Dispara o nosso Toast de sucesso (o balão verde vai aparecer!)
+      await deletePaciente(pacienteParaExcluir);
       showToast('Paciente excluído com sucesso!', 'success');
       
-      // Recarrega a página após 1.5 segundos para a lista atualizar (tempo suficiente para ler o Toast)
       setTimeout(() => {
         window.location.reload();
       }, 1500);
       
     } catch (err) {
       console.error('Erro ao excluir paciente:', err);
-      // Se a API falhar, mostra o balão vermelho
       showToast('Erro ao excluir o paciente.', 'error');
+    } finally {
+      // Independentemente de dar certo ou errado, fecha o modal no final
+      setModalAberto(false);
+      setPacienteParaExcluir(null);
     }
   };
 
-  // Feedback visual enquanto a API não responde
-  if (loading) return <p style={{ padding: '20px' }}>Carregando pacientes...</p>;
-  if (error) return <p style={{ padding: '20px', color: 'red' }}>{error}</p>;
-
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', gap: '20px' }}>
-        <h1 style={{ margin: 0 }}>Lista de Pacientes</h1>
-        
-        {/* Agrupamento dos botões em uma div flex para ficarem lado a lado */}
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <button 
-            onClick={() => history.push('/pacientes/novo')} 
-            style={{ backgroundColor: '#007bff', color: '#fff', padding: '10px 20px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-          >
-            + Novo Paciente
-          </button>
+    <IonPage>
+      <IonHeader>
+        <IonToolbar color="primary">
           
-          <button onClick={logout} className="btn-default" style={{ backgroundColor: '#dc3545', color: '#fff' , padding: '10px 20px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
-            Sair do Sistema
-          </button>
-        </div>
-      </header>
+          <IonButtons slot="start">
+            <IonMenuButton />
+          </IonButtons>
+          
+          <IonTitle className="ion-padding-start">Lista de Pacientes</IonTitle>
+          
+          <IonButtons slot="end">
+            <IonButton onClick={() => history.push('/pacientes/novo')} fill="solid" color="light" style={{ marginRight: '10px' }}>
+              <IonIcon slot="start" icon={addOutline} />
+              Novo Paciente
+            </IonButton>
+          </IonButtons>
+          
+        </IonToolbar>
+      </IonHeader>
 
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f4f4f4', textAlign: 'left' }}>
-            <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>Nome</th>
-            <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>CPF</th>
-            <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>Status</th>
-            <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          {/* O map percorre o array e "desenha" uma linha (tr) inteira para cada paciente */}
-          {pacientes.map((paciente) => (
-            <tr key={paciente.id} style={{ opacity: paciente.status === 'Inativo' ? 0.5 : 1 }}>
-              <td style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>{paciente.nome}</td>
-              <td style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>{formatCPF(paciente.cpf)}</td>
-              <td style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>
-                <span style={{ 
-                  padding: '4px 8px', 
-                  borderRadius: '12px', 
-                  backgroundColor: paciente.status === 'Ativo' ? '#d4edda' : '#f8d7da',
-                  color: paciente.status === 'Ativo' ? '#155724' : '#721c24'
-                }}>
-                  {paciente.status}
-                </span>
-              </td>
-              
-              {/* Célula (td) que redireciona para a rota com o ID dinâmico do paciente */}
-              <td style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>
-                <button 
-                  onClick={() => history.push(`/pacientes/${paciente.id}`)}
-                  style={{ color: '#000', padding: '5px 10px', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-                >
-                  ✏️Editar
-                </button>
-
-                <button 
-                  onClick={() => handleExcluir(paciente.id)}
-                  style={{ backgroundColor: '#dc3545', color: '#fff', padding: '5px 10px', border: 'none', borderRadius: '4px', cursor: 'pointer', marginLeft: '10px', }}
-                >
-                  🗑️
-                </button>
-              </td>
+      <IonContent className="ion-padding">
+        
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
+          <thead>
+            <tr style={{ backgroundColor: '#f4f4f4', textAlign: 'left' }}>
+              <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>Nome</th>
+              <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>CPF</th>
+              <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>Status</th>
+              <th style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>Ações</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {pacientes.map((paciente) => (
+              <tr key={paciente.id} style={{ opacity: paciente.status === 'Inativo' ? 0.5 : 1 }}>
+                <td style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>{paciente.nome}</td>
+                <td style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>{formatCPF(paciente.cpf)}</td>
+                <td style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>
+                  <span style={{ 
+                    padding: '4px 8px', borderRadius: '12px', 
+                    backgroundColor: paciente.status === 'Ativo' ? '#d4edda' : '#f8d7da',
+                    color: paciente.status === 'Ativo' ? '#155724' : '#721c24'
+                  }}>
+                    {paciente.status}
+                  </span>
+                </td>
+                <td style={{ padding: '10px', borderBottom: '1px solid #ddd' }}>
+                  
+                  <IonButton 
+                    fill="clear" 
+                    color="dark" 
+                    onClick={() => history.push(`/pacientes/${paciente.id}`)}
+                  >
+                    <IonIcon icon={createOutline} />
+                  </IonButton>
+
+                  <IonButton 
+                    fill="clear" 
+                    color="danger" 
+                    onClick={() => abrirConfirmacao(paciente.id)} 
+                  >
+                    <IonIcon icon={trashOutline} />
+                  </IonButton>
+                  
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        {/* Modal de confirmação (Fica invisível até modalAberto ser true) */}
+        <IonModal 
+          isOpen={modalAberto} 
+          onDidDismiss={() => setModalAberto(false)}
+          initialBreakpoint={0.5} // No celular, o modal sobe ocupando apenas 50% da tela inferior
+          breakpoints={[0, 0.5]}
+        >
+          <div style={{ padding: '30px', textAlign: 'center' }}>
+            <IonIcon icon={warningOutline} style={{ fontSize: '64px', color: 'var(--ion-color-warning)' }} />
+            <h2>Confirmar Exclusão</h2>
+            <p>Tem a certeza que deseja excluir este paciente?</p>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginTop: '30px' }}>
+              <IonButton color="medium" onClick={() => setModalAberto(false)}>
+                Cancelar
+              </IonButton>
+              <IonButton color="danger" onClick={confirmarExclusao}>
+                Sim, Excluir
+              </IonButton>
+            </div>
+          </div>
+        </IonModal>
+      </IonContent>
+    </IonPage>
   );
 };
