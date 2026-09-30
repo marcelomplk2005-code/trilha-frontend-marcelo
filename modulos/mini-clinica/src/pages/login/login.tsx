@@ -1,51 +1,78 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAuthStore } from '../../store/auth';
+import { 
+  IonPage, IonContent, IonInput, IonButton, 
+  IonItem, IonText, IonGrid, IonRow, IonCol, IonCard, IonCardContent
+} from '@ionic/react';
 
 export const Login = () => {
-  // Memória de curto prazo só dessa tela.
-  // Guarda o que o usuário digita no campo de e-mail em tempo real.
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [erro, setErro] = useState('');
+  const login = useAuthStore((state) => state.login);
+  const history = useHistory();
 
-  // useHistory (Router v5): Permite trocar de página via código.
-  const history = useHistory(); 
-  // login (Zustand): Puxamos apenas a função 'login' da memória global.
-  const login = useAuthStore((state) => state.login); 
-
-  // Função que roda quando o usuário clica em "Entrar"
   const handleLogin = (e: React.FormEvent) => {
-    // Evita o comportamento padrão do navegador de recarregar a página ao dar submit
-    e.preventDefault(); 
-    
-    //Gera o token (crypto.randomUUID) e salva no LocalStorage para resistir ao F5.
-    login();
-
-    // Se validado vai para a área restrita.
-    history.push('/pacientes');
+    e.preventDefault();
+    if (email === 'admin@admin.com' && password === '123456') {
+      login();
+      history.push('/pacientes');
+    } else {
+      setErro('Credenciais inválidas');
+    }
   };
 
   return (
-    <div className="painel" style={{ display: 'flex', alignItems: 'center', minHeight: '80vh' }}>
-      <div className="cadastro" style={{ margin: '0 auto' }}>
-        <h1 className="cadastro__titulo">Entrar no Sistema</h1>
-        
-        <form className="cadastro__formulario" onSubmit={handleLogin}>
-          <div className="cadastro__campo">
-            <label htmlFor="email">E-mail</label>
-            <input 
-              id="email"
-              type="email" 
-              placeholder="Digite qualquer e-mail"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
+    <IonPage>
+      {/* className="ion-padding" centraliza o conteúdo visualmente de forma responsiva */}
+      <IonContent className="ion-padding">
+        <IonGrid style={{ height: '100%' }}>
+          <IonRow className="ion-align-items-center ion-justify-content-center" style={{ height: '100%' }}>
+            <IonCol size="12" sizeMd="6" sizeLg="4">
+              <IonCard>
+                <IonCardContent>
+                  <IonText color="primary" className="ion-text-center">
+                    <h2>Mini Clínica - Login</h2>
+                  </IonText>
+                  
+                  <form onSubmit={handleLogin}>
+                    <IonItem className="ion-margin-bottom">
+                      <IonInput
+                        type="email"
+                        label="E-mail"
+                        labelPlacement="floating"
+                        value={email}
+                        onIonInput={(e) => setEmail(e.detail.value!)}
+                      />
+                    </IonItem>
+                    
+                    <IonItem className="ion-margin-bottom">
+                      <IonInput
+                        type="password"
+                        label="Senha"
+                        labelPlacement="floating"
+                        value={password}
+                        onIonInput={(e) => setPassword(e.detail.value!)}
+                      />
+                    </IonItem>
 
-          <button type="submit" className="btn-default" style={{ width: '100%', marginTop: '10px' }}>
-            Acessar
-          </button>
-        </form>
-      </div>
-    </div>
+                    {erro && (
+                      <IonText color="danger" className="ion-text-center">
+                        <p><small>{erro}</small></p>
+                      </IonText>
+                    )}
+
+                    <IonButton expand="block" type="submit" className="ion-margin-top">
+                      Entrar
+                    </IonButton>
+                  </form>
+                </IonCardContent>
+              </IonCard>
+            </IonCol>
+          </IonRow>
+        </IonGrid>
+      </IonContent>
+    </IonPage>
   );
 };
