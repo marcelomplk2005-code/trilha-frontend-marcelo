@@ -1,10 +1,18 @@
-import { Route, Switch, Redirect } from 'react-router-dom';
+import React from 'react';
+import { Route, Redirect } from 'react-router-dom';
+import { IonRouterOutlet } from '@ionic/react';
 import { useAuthStore } from './store/auth';
 import { Login } from './pages/login/login';
 import { Pacientes } from './pages/Pacientes';
 import { PacienteForm } from './pages/PacienteForm';
 
-const PrivateRoute = ({ component: Component, ...rest }: any) => {
+interface PrivateRouteProps {
+  component: React.ElementType;
+  path?: string;
+  exact?: boolean;
+}
+
+const PrivateRoute = ({ component: Component, ...rest }: PrivateRouteProps) => {
     const token = useAuthStore((state) => state.token);
     return (
     <Route 
@@ -17,12 +25,11 @@ const PrivateRoute = ({ component: Component, ...rest }: any) => {
 };
 
 export const AppRoutes = () => (
-    // Agora este componente devolve DIRETAMENTE o <Switch>, deixando este arquivo responsável APENAS por decidir qual página abrir.
-    <Switch>
+    <IonRouterOutlet id="main-content">
         <Route exact path="/login" component={Login} />
         <PrivateRoute exact path="/pacientes" component={Pacientes}/>
         <PrivateRoute exact path="/pacientes/novo" component={PacienteForm} />
         <PrivateRoute exact path="/pacientes/:id" component={PacienteForm} />
-        <Redirect to="/pacientes" /> 
-    </Switch>
+        <Redirect to="/pacientes" />
+    </IonRouterOutlet> 
 );

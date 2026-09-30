@@ -2,10 +2,10 @@ import { z } from 'zod';
 
 export const pacienteSchema = z.object({
   // NOME: Não pode ser vazio
-  nome: z.string().min(1, "Informe o nome"),
+  nome: z.string({ required_error: "Informe o nome" }).min(1, "Informe o nome"),
 
   // CPF: Não pode ser vazio, e checa se tem 11 dígitos removendo a máscara no refine
-  cpf: z.string()
+  cpf: z.string({ required_error: "Informe o CPF" })
     .min(1, "Informe o CPF")
     .refine((val) => {
       const apenasNumeros = val.replace(/\D/g, '');
@@ -13,7 +13,7 @@ export const pacienteSchema = z.object({
     }, "CPF deve ter 11 dígitos"),
 
   // DATA DE NASCIMENTO: Não pode ser vazia e não pode ser no futuro
-  dataNascimento: z.string()
+  dataNascimento: z.string({ required_error: "Informe a data de nascimento" })
     .min(1, "Informe a data de nascimento")
     .refine((val) => {
       const dataInserida = new Date(val);
@@ -22,7 +22,7 @@ export const pacienteSchema = z.object({
     }, "Data de nascimento não pode ser futura"),
 
   // CELULAR: Checa se tem 11 dígitos
-  celular: z.string()
+  celular: z.string({ required_error: "Informe o celular" })
     .min(1, "Informe o celular")
     .refine((val) => {
       const apenasNumeros = val.replace(/\D/g, '');
@@ -30,7 +30,7 @@ export const pacienteSchema = z.object({
     }, "Celular inválido"),
 
   // E-MAIL: Zod já tem validação nativa para e-mail
-  email: z.string()
+  email: z.string({ required_error: "Informe o e-mail" })
     .min(1, "Informe o e-mail")
     .email("E-mail inválido"),
 
