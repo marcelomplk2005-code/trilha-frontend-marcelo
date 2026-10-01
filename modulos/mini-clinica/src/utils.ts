@@ -23,6 +23,12 @@ export const formatCellphone = (text: string): string => {
     return text;
 };
 
+export const validateCellphone = (text: string): boolean => {
+    if (!text) return false;
+    const digitsOnly = text.replace(/\D/g, "");
+    return digitsOnly.length === 11 && digitsOnly[2] === '9';
+};
+
 export const filterByName = (pacientes: Paciente[], term: string): Paciente[] => {
     const cleanTerm = term.trim(); // .trim() corta os espaços em branco acidentais no começo e no fim da digitação.
     if (!cleanTerm) {// Se, após limpar os espaços, não sobrar nenhuma letra, devolvemos a lista inteira intacta.
